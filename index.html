@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>I100 Payout</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i100 Payout</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-6 text-center">I100 Payout</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center">i100 PAYOUT</h2>
 
-        <!-- Display Number of Users Added -->
-        <div id="userCountDisplay" class="text-center text-lg font-semibold text-blue-600 mb-4">
-            Users Added: <span id="userCount">0</span>
-        </div>
-
+        <!-- Display generated file name -->
         <div id="generatedFileName" class="text-sm text-green-600 mb-4 text-center hidden">
             File Generated: <span id="fileName"></span>
+        </div>
+
+        <!-- Display the number of users added -->
+        <div class="text-sm text-blue-600 mb-4 text-center">
+            Users Added: <span id="userCount">0</span>
         </div>
 
         <form id="userForm" class="space-y-4">
@@ -24,30 +26,30 @@
                 <div id="userCard1" class="user-card">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Payee Name</label>
-                        <input type="text" id="payeeName1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        <input type="text" id="payeeName1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Payee Account</label>
-                        <input type="text" id="payeeAccount1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        <input type="text" id="payeeAccount1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Payee IFSC</label>
-                        <input type="text" id="payeeIfsc1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        <input type="text" id="payeeIfsc1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Amount</label>
-                        <input type="number" id="amount1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        <input type="number" id="amount1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Payee Account Type</label>
-                        <select id="payeeAcType1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        <select id="payeeAcType1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="Saving" selected>Saving</option>
                             <option value="Current">Current</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Mode</label>
-                        <select id="mode1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                        <select id="mode1" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="IMPS" selected>IMPS</option>
                             <option value="NEFT">NEFT</option>
                             <option value="RTGS">RTGS</option>
@@ -72,11 +74,15 @@
         }
 
         document.getElementById('addUser').addEventListener('click', function() {
-            // Save current data
-            const payeeName = document.getElementById(`payeeName${userCount}`).value;
-            const payeeAccount = document.getElementById(`payeeAccount${userCount}`).value;
-            const payeeIfsc = document.getElementById(`payeeIfsc${userCount}`).value;
-            const amount = document.getElementById(`amount${userCount}`).value;
+            // Hide previous user input
+            const prevUserCard = document.getElementById(`userCard${userCount}`);
+            if (prevUserCard) prevUserCard.style.display = "none";
+
+            // Get and save previous user data if valid
+            const payeeName = document.getElementById(`payeeName${userCount}`).value.trim();
+            const payeeAccount = document.getElementById(`payeeAccount${userCount}`).value.trim();
+            const payeeIfsc = document.getElementById(`payeeIfsc${userCount}`).value.trim();
+            const amount = document.getElementById(`amount${userCount}`).value.trim();
             const payeeAcType = document.getElementById(`payeeAcType${userCount}`).value;
             const mode = document.getElementById(`mode${userCount}`).value;
 
@@ -85,43 +91,41 @@
                 updateUserCount();
             }
 
-            // Hide previous entry
-            document.getElementById(`userCard${userCount}`).style.display = "none";
-
-            // Create a new form
+            // Increment user count for new inputs
             userCount++;
 
+            // Create new user input fields
             const newUserCard = document.createElement('div');
             newUserCard.classList.add('user-card');
             newUserCard.id = `userCard${userCount}`;
 
             newUserCard.innerHTML = `
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Payee Name</label>
-                    <input type="text" id="payeeName${userCount}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    <label>Payee Name</label>
+                    <input type="text" id="payeeName${userCount}" class="input w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Payee Account</label>
-                    <input type="text" id="payeeAccount${userCount}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    <label>Payee Account</label>
+                    <input type="text" id="payeeAccount${userCount}" class="input w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Payee IFSC</label>
-                    <input type="text" id="payeeIfsc${userCount}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    <label>Payee IFSC</label>
+                    <input type="text" id="payeeIfsc${userCount}" class="input w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Amount</label>
-                    <input type="number" id="amount${userCount}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    <label>Amount</label>
+                    <input type="number" id="amount${userCount}" class="input w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Payee Account Type</label>
-                    <select id="payeeAcType${userCount}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    <label>Payee Account Type</label>
+                    <select id="payeeAcType${userCount}" class="input w-full p-2 border border-gray-300 rounded-md">
                         <option value="Saving" selected>Saving</option>
                         <option value="Current">Current</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Mode</label>
-                    <select id="mode${userCount}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                    <label>Mode</label>
+                    <select id="mode${userCount}" class="input w-full p-2 border border-gray-300 rounded-md">
                         <option value="IMPS" selected>IMPS</option>
                         <option value="NEFT">NEFT</option>
                         <option value="RTGS">RTGS</option>
@@ -135,10 +139,10 @@
         document.getElementById('userForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const payeeName = document.getElementById(`payeeName${userCount}`).value;
-            const payeeAccount = document.getElementById(`payeeAccount${userCount}`).value;
-            const payeeIfsc = document.getElementById(`payeeIfsc${userCount}`).value;
-            const amount = document.getElementById(`amount${userCount}`).value;
+            const payeeName = document.getElementById(`payeeName${userCount}`).value.trim();
+            const payeeAccount = document.getElementById(`payeeAccount${userCount}`).value.trim();
+            const payeeIfsc = document.getElementById(`payeeIfsc${userCount}`).value.trim();
+            const amount = document.getElementById(`amount${userCount}`).value.trim();
             const payeeAcType = document.getElementById(`payeeAcType${userCount}`).value;
             const mode = document.getElementById(`mode${userCount}`).value;
 
@@ -147,13 +151,18 @@
                 updateUserCount();
             }
 
-            const data = [["payeeName", "payeeAccount", "payeeIfsc", "amount", "payeeAcType", "mode"], ...userData];
+            // Remove empty entries and generate file
+            const filteredData = userData.filter(row => row.some(value => value));
 
-            const ws = XLSX.utils.aoa_to_sheet(data);
+            if (filteredData.length === 0) {
+                alert("No valid users to generate Excel.");
+                return;
+            }
+
+            const ws = XLSX.utils.aoa_to_sheet([["payeeName", "payeeAccount", "payeeIfsc", "amount", "payeeAcType", "mode"], ...filteredData]);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-
-            XLSX.writeFile(wb, `BulkUpload_${Math.random().toString(36).substr(2, 8)}.xlsx`);
+            XLSX.writeFile(wb, `BulkUpload_${Date.now()}.xlsx`);
         });
     </script>
 </body>
