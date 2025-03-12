@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PAYOUT</title>
+    <title>I100 Payout</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-6 text-center">PAYOUT</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center">I100 Payout</h2>
+
+        <!-- Display Number of Users Added -->
+        <div id="userCountDisplay" class="text-center text-lg font-semibold text-blue-600 mb-4">
+            Users Added: <span id="userCount">0</span>
+        </div>
 
         <div id="generatedFileName" class="text-sm text-green-600 mb-4 text-center hidden">
             File Generated: <span id="fileName"></span>
@@ -62,6 +67,10 @@
         let userCount = 1;
         let userData = [];
 
+        function updateUserCount() {
+            document.getElementById("userCount").textContent = userData.length;
+        }
+
         document.getElementById('addUser').addEventListener('click', function() {
             // Save current data
             const payeeName = document.getElementById(`payeeName${userCount}`).value;
@@ -73,6 +82,7 @@
 
             if (payeeName && payeeAccount && payeeIfsc && amount) {
                 userData.push([payeeName, payeeAccount, payeeIfsc, amount, payeeAcType, mode]);
+                updateUserCount();
             }
 
             // Hide previous entry
@@ -134,6 +144,7 @@
 
             if (payeeName && payeeAccount && payeeIfsc && amount) {
                 userData.push([payeeName, payeeAccount, payeeIfsc, amount, payeeAcType, mode]);
+                updateUserCount();
             }
 
             const data = [["payeeName", "payeeAccount", "payeeIfsc", "amount", "payeeAcType", "mode"], ...userData];
